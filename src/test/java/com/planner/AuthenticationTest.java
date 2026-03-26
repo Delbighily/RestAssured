@@ -15,7 +15,6 @@ public class AuthenticationTest {
     public void testAuthenticateWithCorrectCredentials() {
         given()
             .baseUri(BASE_URI)
-            .header("Accept", "text/plain")
             .header("Content-Type", "application/json")
             .body("{\"userNameOrEmailAddress\":\"abdallahtest\",\"password\":\"Aa@123456\",\"rememberClient\":false,\"tenantName\":\"abdallahtest\"}")
         .when()
@@ -37,7 +36,6 @@ public class AuthenticationTest {
     public void testAuthenticateWithWrongTenantName() {
         given()
             .baseUri(BASE_URI)
-            .header("Accept", "text/plain")
             .header("Content-Type", "application/json")
             .body("{\"userNameOrEmailAddress\":\"abdallahtest\",\"password\":\"Aa@123456\",\"rememberClient\":false,\"tenantName\":\"wrongtenant\"}")
         .when()
@@ -56,7 +54,6 @@ public class AuthenticationTest {
     public void testAuthenticateWithWrongUsername() {
         given()
             .baseUri(BASE_URI)
-            .header("Accept", "text/plain")
             .header("Content-Type", "application/json")
             .body("{\"userNameOrEmailAddress\":\"wronguser\",\"password\":\"Aa@123456\",\"rememberClient\":false,\"tenantName\":\"abdallahtest\"}")
         .when()
@@ -75,7 +72,6 @@ public class AuthenticationTest {
     public void testAuthenticateWithWrongPassword() {
         given()
             .baseUri(BASE_URI)
-            .header("Accept", "text/plain")
             .header("Content-Type", "application/json")
             .body("{\"userNameOrEmailAddress\":\"abdallahtest\",\"password\":\"wrongpassword\",\"rememberClient\":false,\"tenantName\":\"abdallahtest\"}")
         .when()
@@ -94,7 +90,6 @@ public class AuthenticationTest {
     public void testAuthenticateWithEmptyTenantName() {
         given()
             .baseUri(BASE_URI)
-            .header("Accept", "text/plain")
             .header("Content-Type", "application/json")
             .body("{\"userNameOrEmailAddress\":\"abdallahtest\",\"password\":\"Aa@123456\",\"rememberClient\":false,\"tenantName\":\"\"}")
         .when()
