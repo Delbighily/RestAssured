@@ -29,6 +29,7 @@ public class AuthenticationTest {
             .body("result.accessToken", not(emptyString()));
     }
 
+
     /**
      * Test Case 2: Wrong tenancy name should return authentication failure
      */
