@@ -1,6 +1,10 @@
 package com.planner;
 
+import io.restassured.http.ContentType;
 import org.testng.annotations.*;
+
+import java.io.File;
+
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
@@ -13,10 +17,11 @@ public class AuthenticationTest {
      */
     @Test
     public void testAuthenticateWithCorrectCredentials() {
+        File datastorage = new File("src/test/resources/data.json");
         given()
             .baseUri(BASE_URI)
-            .header("Content-Type", "application/json")
-            .body("{\"userNameOrEmailAddress\":\"abdallahtest\",\"password\":\"Aa@123456\",\"rememberClient\":false,\"tenantName\":\"abdallahtest\"}")
+            .contentType(ContentType.JSON)
+            .body(datastorage)
         .when()
             .post()
         .then()
@@ -36,7 +41,7 @@ public class AuthenticationTest {
     public void testAuthenticateWithWrongTenantName() {
         given()
             .baseUri(BASE_URI)
-            .header("Content-Type", "application/json")
+            .contentType(ContentType.JSON)
             .body("{\"userNameOrEmailAddress\":\"abdallahtest\",\"password\":\"Aa@123456\",\"rememberClient\":false,\"tenantName\":\"wrongtenant\"}")
         .when()
             .post()
@@ -54,7 +59,7 @@ public class AuthenticationTest {
     public void testAuthenticateWithWrongUsername() {
         given()
             .baseUri(BASE_URI)
-            .header("Content-Type", "application/json")
+            .contentType(ContentType.JSON)
             .body("{\"userNameOrEmailAddress\":\"wronguser\",\"password\":\"Aa@123456\",\"rememberClient\":false,\"tenantName\":\"abdallahtest\"}")
         .when()
             .post()
@@ -72,7 +77,7 @@ public class AuthenticationTest {
     public void testAuthenticateWithWrongPassword() {
         given()
             .baseUri(BASE_URI)
-            .header("Content-Type", "application/json")
+            .contentType(ContentType.JSON)
             .body("{\"userNameOrEmailAddress\":\"abdallahtest\",\"password\":\"wrongpassword\",\"rememberClient\":false,\"tenantName\":\"abdallahtest\"}")
         .when()
             .post()
@@ -90,7 +95,7 @@ public class AuthenticationTest {
     public void testAuthenticateWithEmptyTenantName() {
         given()
             .baseUri(BASE_URI)
-            .header("Content-Type", "application/json")
+            .contentType(ContentType.JSON)
             .body("{\"userNameOrEmailAddress\":\"abdallahtest\",\"password\":\"Aa@123456\",\"rememberClient\":false,\"tenantName\":\"\"}")
         .when()
             .post()
