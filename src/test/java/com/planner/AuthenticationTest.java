@@ -1,31 +1,36 @@
 package com.planner;
 
 import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
 import org.testng.annotations.*;
-
-import java.io.File;
-
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 public class AuthenticationTest {
 
-    private static final String BASE_URI = "http://69.10.56.98:84/api/TokenAuth/Authenticate";
+    private RequestSpecification requestSpec;
+
+    /**
+     * Setup method to initialize shared RequestSpecification
+     */
+    @BeforeClass
+    public void setup() {
+        requestSpec = ApiSpecification.buildRequestSpecification();
+    }
 
     /**
      * Test Case 1: Correct credentials should return successful response
      */
     @Test
     public void testAuthenticateWithCorrectCredentials() {
-        File datastorage = new File("src/test/resources/data.json");
+        TestData testData = new TestData();
         given()
-            .baseUri(BASE_URI)
-            .contentType(ContentType.JSON)
-            .body(datastorage)
+            .spec(requestSpec)
+            .body(testData.toJson())
         .when()
             .post()
         .then()
-            .log().all()
+            .log().ifValidationFails()
             .assertThat()
             .statusCode(200)
             .body("success", equalTo(true))
@@ -39,14 +44,15 @@ public class AuthenticationTest {
      */
     @Test
     public void testAuthenticateWithWrongTenantName() {
+        TestData testData = new TestData()
+            .setTenantName("wrongtenant");
         given()
-            .baseUri(BASE_URI)
-            .contentType(ContentType.JSON)
-            .body("{\"userNameOrEmailAddress\":\"abdallahtest\",\"password\":\"Aa@123456\",\"rememberClient\":false,\"tenantName\":\"wrongtenant\"}")
+            .spec(requestSpec)
+            .body(testData.toJson())
         .when()
             .post()
         .then()
-            .log().all()
+            .log().ifValidationFails()
             .assertThat()
             .statusCode(500)
             .body("error.message", containsString("User Not Found"));
@@ -57,14 +63,15 @@ public class AuthenticationTest {
      */
     @Test
     public void testAuthenticateWithWrongUsername() {
+        TestData testData = new TestData()
+            .setUserNameOrEmailAddress("wronguser");
         given()
-            .baseUri(BASE_URI)
-            .contentType(ContentType.JSON)
-            .body("{\"userNameOrEmailAddress\":\"wronguser\",\"password\":\"Aa@123456\",\"rememberClient\":false,\"tenantName\":\"abdallahtest\"}")
+            .spec(requestSpec)
+            .body(testData.toJson())
         .when()
             .post()
         .then()
-            .log().all()
+            .log().ifValidationFails()
             .assertThat()
             .statusCode(500)
             .body("error.message", containsString("User Not Found"));
@@ -75,14 +82,15 @@ public class AuthenticationTest {
      */
     @Test
     public void testAuthenticateWithWrongPassword() {
+        TestData testData = new TestData()
+            .setPassword("wrongpassword");
         given()
-            .baseUri(BASE_URI)
-            .contentType(ContentType.JSON)
-            .body("{\"userNameOrEmailAddress\":\"abdallahtest\",\"password\":\"wrongpassword\",\"rememberClient\":false,\"tenantName\":\"abdallahtest\"}")
+            .spec(requestSpec)
+            .body(testData.toJson())
         .when()
             .post()
         .then()
-            .log().all()
+            .log().ifValidationFails()
             .assertThat()
             .statusCode(500)
             .body("error.message", containsString("User Not Found"));
@@ -93,14 +101,15 @@ public class AuthenticationTest {
      */
     @Test
     public void testAuthenticateWithEmptyTenantName() {
+        TestData testData = new TestData()
+            .setTenantName("");
         given()
-            .baseUri(BASE_URI)
-            .contentType(ContentType.JSON)
-            .body("{\"userNameOrEmailAddress\":\"abdallahtest\",\"password\":\"Aa@123456\",\"rememberClient\":false,\"tenantName\":\"\"}")
+            .spec(requestSpec)
+            .body(testData.toJson())
         .when()
             .post()
         .then()
-            .log().all()
+            .log().ifValidationFails()
             .assertThat()
             .statusCode(500)
             .body("error.message", containsString("User Not Found"));
