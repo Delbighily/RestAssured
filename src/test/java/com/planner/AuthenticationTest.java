@@ -1,132 +1,105 @@
 package com.planner;
 
 import data.TestData;
-import io.qameta.allure.Description;
-import io.qameta.allure.Severity;
-import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.*;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.testng.annotations.*;
 import specs.ApiSpecification;
+import com.planner.utils.ResponseValidator;
+import com.planner.utils.ApiTestHelper;
 
-import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
+@Epic("Planner API")
+@Feature("Authentication")
 public class AuthenticationTest {
 
     private RequestSpecification requestSpec;
 
-    /**
-     * Setup method to initialize shared RequestSpecification
-     */
     @BeforeClass
     public void setup() {
         requestSpec = ApiSpecification.buildRequestSpecification();
     }
 
-    /**
-     * Test Case 1: Correct credentials should return successful response
-     */
     @Test
+    @Story("Login with valid credentials")
     @Description("Verify that authentication succeeds with correct credentials")
     @Severity(SeverityLevel.CRITICAL)
-    public void testAuthenticateWithCorrectCredentials() {
+    public void authenticate_with_correct_credentials_should_succeed() {
         TestData testData = new TestData();
-        given()
-            .spec(requestSpec)
-            .body(testData.toJson())
-        .when()
-            .post()
-        .then()
-            .log().ifValidationFails()
-            .assertThat()
-            .statusCode(200)
-            .body("success", equalTo(true))
-            .body("result.accessToken", notNullValue())
-            .body("result.accessToken", not(emptyString()));
+        Response response = ApiTestHelper.postRequest(requestSpec, testData.toJson());
+
+        ResponseValidator.validateResponse(response, responseSpec ->
+                responseSpec.assertThat()
+                        .statusCode(200)
+                        .body("success", equalTo(true))
+                        .body("result.accessToken", notNullValue())
+                        .body("result.accessToken", not(emptyString()))
+        );
     }
 
-
-    /**
-     * Test Case 2: Wrong tenancy name should return authentication failure
-     */
     @Test
+    @Story("Login with invalid credentials")
     @Description("Verify that authentication fails with incorrect tenant name")
     @Severity(SeverityLevel.NORMAL)
-    public void testAuthenticateWithWrongTenantName() {
+    public void authenticate_with_wrong_tenant_name_should_fail() {
         TestData testData = new TestData()
-            .setTenantName("wrongtenant");
-        given()
-            .spec(requestSpec)
-            .body(testData.toJson())
-        .when()
-            .post()
-        .then()
-            .log().ifValidationFails()
-            .assertThat()
-            .statusCode(500)
-            .body("error.message", containsString("User Not Found"));
+                .setTenantName("wrongtenant");
+        Response response = ApiTestHelper.postRequest(requestSpec, testData.toJson());
+
+        ResponseValidator.validateResponse(response, responseSpec ->
+                responseSpec.assertThat()
+                        .statusCode(500)
+                        .body("error.message", containsString("User Not Found"))
+        );
     }
 
-    /**
-     * Test Case 3: Wrong username should return authentication failure
-     */
     @Test
+    @Story("Login with invalid credentials")
     @Description("Verify that authentication fails with incorrect username")
     @Severity(SeverityLevel.NORMAL)
-    public void testAuthenticateWithWrongUsername() {
+    public void authenticate_with_wrong_username_should_fail() {
         TestData testData = new TestData()
-            .setUserNameOrEmailAddress("wronguser");
-        given()
-            .spec(requestSpec)
-            .body(testData.toJson())
-        .when()
-            .post()
-        .then()
-            .log().ifValidationFails()
-            .assertThat()
-            .statusCode(500)
-            .body("error.message", containsString("User Not Found"));
+                .setUserNameOrEmailAddress("wronguser");
+        Response response = ApiTestHelper.postRequest(requestSpec, testData.toJson());
+
+        ResponseValidator.validateResponse(response, responseSpec ->
+                responseSpec.assertThat()
+                        .statusCode(500)
+                        .body("error.message", containsString("User Not Found"))
+        );
     }
 
-    /**
-     * Test Case 4: Wrong password should return authentication failure
-     */
     @Test
+    @Story("Login with invalid credentials")
     @Description("Verify that authentication fails with incorrect password")
     @Severity(SeverityLevel.NORMAL)
-    public void testAuthenticateWithWrongPassword() {
+    public void authenticate_with_wrong_password_should_fail() {
         TestData testData = new TestData()
-            .setPassword("wrongpassword");
-        given()
-            .spec(requestSpec)
-            .body(testData.toJson())
-        .when()
-            .post()
-        .then()
-            .log().ifValidationFails()
-            .assertThat()
-            .statusCode(500)
-            .body("error.message", containsString("User Not Found"));
+                .setPassword("wrongpassword");
+        Response response = ApiTestHelper.postRequest(requestSpec, testData.toJson());
+
+        ResponseValidator.validateResponse(response, responseSpec ->
+                responseSpec.assertThat()
+                        .statusCode(500)
+                        .body("error.message", containsString("User Not Found"))
+        );
     }
 
-    /**
-     * Test Case 5: Empty tenancy name should return authentication failure or bad request
-     */
     @Test
+    @Story("Login with invalid credentials")
     @Description("Verify that authentication fails with empty tenant name")
     @Severity(SeverityLevel.MINOR)
-    public void testAuthenticateWithEmptyTenantName() {
+    public void authenticate_with_empty_tenant_name_should_fail() {
         TestData testData = new TestData()
-            .setTenantName("");
-        given()
-            .spec(requestSpec)
-            .body(testData.toJson())
-        .when()
-            .post()
-        .then()
-            .log().ifValidationFails()
-            .assertThat()
-            .statusCode(500)
-            .body("error.message", containsString("User Not Found"));
+                .setTenantName("");
+        Response response = ApiTestHelper.postRequest(requestSpec, testData.toJson());
+
+        ResponseValidator.validateResponse(response, responseSpec ->
+                responseSpec.assertThat()
+                        .statusCode(500)
+                        .body("error.message", containsString("User Not Found"))
+        );
     }
 }
