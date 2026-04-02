@@ -1,8 +1,13 @@
 package com.planner;
 
-import io.restassured.http.ContentType;
+import data.TestData;
+import io.qameta.allure.Description;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import io.restassured.specification.RequestSpecification;
 import org.testng.annotations.*;
+import specs.ApiSpecification;
+
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
@@ -22,6 +27,8 @@ public class AuthenticationTest {
      * Test Case 1: Correct credentials should return successful response
      */
     @Test
+    @Description("Verify that authentication succeeds with correct credentials")
+    @Severity(SeverityLevel.CRITICAL)
     public void testAuthenticateWithCorrectCredentials() {
         TestData testData = new TestData();
         given()
@@ -43,6 +50,8 @@ public class AuthenticationTest {
      * Test Case 2: Wrong tenancy name should return authentication failure
      */
     @Test
+    @Description("Verify that authentication fails with incorrect tenant name")
+    @Severity(SeverityLevel.NORMAL)
     public void testAuthenticateWithWrongTenantName() {
         TestData testData = new TestData()
             .setTenantName("wrongtenant");
@@ -62,6 +71,8 @@ public class AuthenticationTest {
      * Test Case 3: Wrong username should return authentication failure
      */
     @Test
+    @Description("Verify that authentication fails with incorrect username")
+    @Severity(SeverityLevel.NORMAL)
     public void testAuthenticateWithWrongUsername() {
         TestData testData = new TestData()
             .setUserNameOrEmailAddress("wronguser");
@@ -81,6 +92,8 @@ public class AuthenticationTest {
      * Test Case 4: Wrong password should return authentication failure
      */
     @Test
+    @Description("Verify that authentication fails with incorrect password")
+    @Severity(SeverityLevel.NORMAL)
     public void testAuthenticateWithWrongPassword() {
         TestData testData = new TestData()
             .setPassword("wrongpassword");
@@ -100,6 +113,8 @@ public class AuthenticationTest {
      * Test Case 5: Empty tenancy name should return authentication failure or bad request
      */
     @Test
+    @Description("Verify that authentication fails with empty tenant name")
+    @Severity(SeverityLevel.MINOR)
     public void testAuthenticateWithEmptyTenantName() {
         TestData testData = new TestData()
             .setTenantName("");
@@ -115,4 +130,3 @@ public class AuthenticationTest {
             .body("error.message", containsString("User Not Found"));
     }
 }
-
